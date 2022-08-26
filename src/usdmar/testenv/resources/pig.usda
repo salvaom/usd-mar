@@ -1,0 +1,7 @@
+#usda 1.0
+(
+	doc = "This is an example of setting a Model Prim kind"
+)
+
+def "geo" () {
+}

@@ -1,0 +1,17 @@
+{
+  "Plugins": [
+    {
+      "Info": {
+        "Types": {
+          "MultiAssetResolver": {
+            "bases": [ "ArResolver" ],
+            "uriSchemes": [ @_RESOLVER_SCHEMAS@ ]
+          }
+        }
+      },
+      "LibraryPath": "./@PROJECT_NAME@@CMAKE_SHARED_LIBRARY_SUFFIX@",
+      "Name": "usdmar",
+      "Type": "library"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+out
+.vs
+CMakeSettings.json
+*.pyc

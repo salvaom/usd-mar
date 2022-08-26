@@ -1,0 +1,28 @@
+{
+  "stacks": {
+    "db": {
+      "resolvers": [
+        {
+          "type": "format",
+          "pairs": [
+            [
+              "/([\\w\\d]+)/(?:seq|build)/([\\w\\d_]+)/([\\w\\d_]+)/([\\w\\d_]+)/([\\w\\d_]+)",
+              "?project={0}&sequence={1}&shot={2}&asset={3}&version={4}"
+            ]
+          ]
+        },
+        {
+          "type": "rest",
+          "host": "http://127.0.0.1:5000",
+          "entryPoint": "/api/v3"
+        },
+        {
+          "type": "env"
+        }
+      ]
+    }
+  },
+  "defaults": {
+    "mr": "db"
+  }
+}

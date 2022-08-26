@@ -1,0 +1,11 @@
+#usda 1.0
+(
+	doc = "This is an example of setting a Model Prim kind"
+)
+
+def "geo" (
+	references = [
+        @mr:db!/AHB/seq/NJS/0010/boat_aa/latest@
+    ]
+    ) {
+}
