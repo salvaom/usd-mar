@@ -1,6 +1,6 @@
 > **Warning**
 > This is probably my first CMake/C++ project, you might see some things that could be better or are simply wrong, so
-> please take it with a pinch of salt. PR are highly appreciated.
+> please take it with a pinch of salt. PRs are highly appreciated.
 
 # USD Multi Asset Resolver
 
@@ -130,13 +130,24 @@ usdmar - Resolving /AHB/seq/NJS/0010/boat_aa/latest:
 
 ## Build command
 
+The easiest way to build it is to compile USD and use the flag `FETCH_CPR` to automatically download and build the
+missing of dependency:
+
+```
+git clone https://github.com/salvaom/usd-mar
+cd usd-mar
+mkdir build
+cd build
+cmake -DCMAKE_PREFIX_PATH=<USD INSTALL PATH> -G "<GENERATOR NAME>" -DFETCH_CPR=ON ..
+```
+
 ## Build requirements:
 
-| Name                                 | Optional    |
-|--------------------------------------|-------------|
-| USD                                  | No          |
-| [CPR](https://github.com/libcpr/cpr) | Yes         |
-| Python                               | No, planned |
+| Name                                 | Optional    | Version |
+|--------------------------------------|-------------|---------|
+| USD                                  | No          | 22.08   |
+| [CPR](https://github.com/libcpr/cpr) | Yes         | 1.9.1   |
+| Python                               | No, planned | 3.7.x   |
 
 ## Build Options
 
