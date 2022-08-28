@@ -7,7 +7,8 @@ future, possibly more).
 
 # Usage
 
-The asset resolver can be configured with stacks of sub-solvers that will pick up the output of the previous sub-solver and pass its result to the next one until the asset path is fully resolved.
+The asset resolver can be configured with stacks of sub-solvers that will pick up the output of the previous sub-solver
+and pass its result to the next one until the asset path is fully resolved.
 
 ## Available subsolvers
 
@@ -21,7 +22,8 @@ The asset resolver can be configured with stacks of sub-solvers that will pick u
 
 ## Configuration
 
-The solver is configured by specifying the path to a JSON file via the environment variable `USDMAR_CONFIG_PATH` with the following format:
+The solver is configured by specifying the path to a JSON file via the environment variable `USDMAR_CONFIG_PATH` with
+the following format:
 
 ```json
 {
@@ -41,11 +43,15 @@ The solver is configured by specifying the path to a JSON file via the environme
 }
 ```
 
-Under `stacks`, a mapping of stacks can be defined, each one with its own list of resolvers. Resolvers can also specify their own variables. The defaults key makes defining the default stack to use in the asset path optional, for more information see the next section.
+Under `stacks`, a mapping of stacks can be defined, each one with its own list of resolvers. Resolvers can also specify
+their own variables. The defaults key makes defining the default stack to use in the asset path optional, for more
+information see the next section.
 
 ## Schemes
 
-The asset path is composed of three elements: `<scheme>:<stack>!<path>`, where `scheme` is the defined scheme at build time (by default `mr`), `stack` is the name of the stack to use and `path` is the asset path itself to be resolved. On the next section there are examples on it's usage.
+The asset path is composed of three elements: `<scheme>:<stack>!<path>`, where `scheme` is the defined scheme at build
+time (by default `mr`), `stack` is the name of the stack to use and `path` is the asset path itself to be resolved. On
+the next section there are examples on it's usage.
 
 ## Example
 
@@ -86,7 +92,9 @@ The following configuration file will do the following:
 }
 ```
 
-To test this, we can create this USD file and run a simple Flask server on localhost with port 5000. Please note that because we've defined in the `defaults` section the scheme `mr:`, the asset path specified would be equivalent to it without the `db!` specification: `@mr:/AHB/seq/NJS/0010/boat_aa/latest@`.
+To test this, we can create this USD file and run a simple Flask server on localhost with port 5000. Please note that
+because we've defined in the `defaults` section the scheme `mr:`, the asset path specified would be equivalent to it
+without the `db!` specification: `@mr:/AHB/seq/NJS/0010/boat_aa/latest@`.
 
 ```
 #usda 1.0
@@ -116,12 +124,20 @@ usdmar - Resolving /AHB/seq/NJS/0010/boat_aa/latest:
 
 # Building
 
-Build requirements:
+## Build command
 
-| Name                                 | Optional     |
-|--------------------------------------|--------------|
-| USD                                  | No           |
-| [CPR](https://github.com/libcpr/cpr) | No, planned  |
-| Python                               | No, planned  |
+## Build requirements:
 
-I have not included a `FindCPR` cmake module, so I'd recommend to build it via [vcpkg](https://github.com/microsoft/vcpkg)
+| Name                                 | Optional    |
+|--------------------------------------|-------------|
+| USD                                  | No          |
+| [CPR](https://github.com/libcpr/cpr) | Yes         |
+| Python                               | No, planned |
+
+## Build Options
+
+| Option           | Function                                                              | Default  |
+|------------------|-----------------------------------------------------------------------|----------|
+| USDMAR_REST      | Whether to build with support for the REST subsolver<br/>Requires CRP | ON       |
+| FETCH_CPR        | Downloads and builds CPR                                              | OFF      |
+| RESOLVER_SCHEMES | List of schemes (space separated) to register for asset resolution    | `mr`     |

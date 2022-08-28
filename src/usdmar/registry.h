@@ -3,25 +3,27 @@
 #include <map>
 
 #include "usdmar/solverStack.h"
+#include "usdmar/solvers/subsolver.h"
 
-class SubsolverRegistry
+class Registry
 {
 public:
-
-    void RegisterStack(const std::string name, SubSolverStack stack);
-
-    static SubsolverRegistry& GetInstance()
+    static Registry& GetInstance()
     {
-        static SubsolverRegistry instance;
+        static Registry instance;
         return instance;
     }
 
-    void RegisterFromJsObject(const JsObject& jsonDict);
-
+    void RegisterStack(const std::string name, SubSolverStack stack);
+    void RegisterStacksFromJsObject(const JsObject& jsonDict);
     std::shared_ptr<SubSolverStack> GetStack(std::string name);
 
+    void RegisterSubSolver(const std::shared_ptr<SubSolver> subsolver);
+    std::shared_ptr<SubSolver> GetSubSolver(std::string name);
+
 private:
-    SubsolverRegistry() {}
-    std::map<std::string, std::shared_ptr<SubSolverStack>> _registry;
+    Registry() {}
+    std::map<std::string, std::shared_ptr<SubSolverStack>> _stackRegistry;
+    std::map<std::string, std::shared_ptr<SubSolver>> _subsolverRegistry;
 };
 

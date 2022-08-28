@@ -11,22 +11,27 @@
 #include <pxr/base/tf/fileUtils.h>
 
 #include "usdmar/resolver.h"
-#include "usdmar/solvers/rest.h"
 #include "usdmar/registry.h"
 #include "usdmar/debug.h"
 #include "usdmar/utils.h"
+#include "usdmar/config.h"
+
+#ifdef USDMAR_REST
+#include "usdmar/solvers/rest.h"
+#endif
+#include "usdmar/solvers/env.h"
+#include "usdmar/solvers/format.h"
 
 PXR_NAMESPACE_OPEN_SCOPE
 
 AR_DEFINE_RESOLVER(MultiAssetResolver, ArResolver);
 
-// TODO: Allow this to be define at configure time
-std::string uriSchemes = "mr";
+// TODO: Allow this to be define at build time
+std::vector<std::string> uriSchemes = std::vector<std::string>{ RESOLVER_SCHEMES };
 
 std::string _ExtractVarsFromAssetPath(const std::string& assetPath, std::string& scheme, std::string& stackName) {
-	std::vector<std::string> schemes = TfStringTokenize(uriSchemes);
 
-	std::regex regex("^(" + JoinString("|", schemes) + "):([\\w\\d_]+)?!?(.+)");
+	std::regex regex("^(" + JoinString("|", uriSchemes) + "):([\\w\\d_]+)?!?(.+)");
 	std::smatch matches;
 
 	if (std::regex_search(assetPath, matches, regex)) {
@@ -57,7 +62,14 @@ std::string _ExtractVarsFromAssetPath(const std::string& assetPath, std::string&
 MultiAssetResolver::MultiAssetResolver() {
 
 	USDMAR_DEBUG("MultiResolver::MultiResolver()\n");
-	SubsolverRegistry& registry = SubsolverRegistry::GetInstance();
+	Registry& registry = Registry::GetInstance();
+
+	// Register first all subsolvers
+#ifdef USDMAR_REST
+	registry.RegisterSubSolver(std::make_shared<RESTSubSolver>());
+#endif
+	registry.RegisterSubSolver(std::make_shared<EnvSubSolver>());
+	registry.RegisterSubSolver(std::make_shared<FormatterSubSolver>());
 
 	// TODO: Move this environment variable to a USD registered one
 	std::string configFilePath = ArchGetEnv("USDMAR_CONFIG_PATH");
@@ -87,7 +99,7 @@ MultiAssetResolver::MultiAssetResolver() {
 	}
 	const JsObject& rootDict = configJsValue.GetJsObject();
 
-	registry.RegisterFromJsObject(rootDict);
+	registry.RegisterStacksFromJsObject(rootDict);
 
 	auto defaultsPtr = _GetJsObjectValue<JsObject>(rootDict, "defaults");
 	if (defaultsPtr != nullptr) {
@@ -135,7 +147,7 @@ MultiAssetResolver::_Resolve(const std::string& assetPath) const
 	auto cleanAssetPath = _ExtractVarsFromAssetPath(assetPath, scheme, stackName);
 	USDMAR_DEBUG("Extracted asset path: %s\n", cleanAssetPath.c_str());
 
-	SubsolverRegistry& registry = SubsolverRegistry::GetInstance();
+	Registry& registry = Registry::GetInstance();
 
 	// If not specified, we fall back to the defaults
 	if (stackName == "") {

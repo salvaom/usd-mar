@@ -11,7 +11,9 @@ class SubSolver {
 public:
 	SubSolver() {};
 	~SubSolver() = default;
+
 	virtual const std::string GetName() = 0;
 	virtual std::string Resolve(std::string assetPath) = 0;
 	virtual void ConfigureFromJsObject(const JsObject& object) = 0;
+	virtual std::shared_ptr<SubSolver> CreateNew() const = 0;
 };

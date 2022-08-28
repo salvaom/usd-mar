@@ -5,7 +5,7 @@
         "Types": {
           "MultiAssetResolver": {
             "bases": [ "ArResolver" ],
-            "uriSchemes": [ @_RESOLVER_SCHEMAS@ ]
+            "uriSchemes": [ @_RESOLVER_SCHEMES@ ]
           }
         }
       },

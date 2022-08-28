@@ -15,6 +15,11 @@ public:
 	void SetEntryPoint(std::string entryPoint);
 	virtual std::string Resolve(std::string assetPath) override;
 	virtual void ConfigureFromJsObject(const JsObject& object) override;
+	virtual std::shared_ptr<SubSolver> CreateNew() const {
+		return std::shared_ptr<RESTSubSolver>(new RESTSubSolver());
+	};
+
+
 
 private:
 	std::string _host;

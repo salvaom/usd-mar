@@ -6,6 +6,10 @@
 #include "usdmar/solvers/env.h"
 #include "usdmar/solvers/format.h"
 #include "usdmar/debug.h"
+#include "usdmar/registry.h"
+
+
+
 
 PXR_NAMESPACE_USING_DIRECTIVE
 
@@ -40,15 +44,15 @@ std::unique_ptr<SubSolverStack> SubSolverStack::CreateFromJsObject(const JsObjec
 	std::unique_ptr<SubSolverStack> stack = std::make_unique<SubSolverStack>();
 
 	JsObject::const_iterator subsolverIter;
-	subsolverIter = stackDefiniton.find("stack");
+	subsolverIter = stackDefiniton.find("resolvers");
 
 	if (subsolverIter == stackDefiniton.end()) {
-		USDMAR_DEBUG("WARNING: No stack specified\n");
+		USDMAR_DEBUG("WARNING: No 'resolvers' key specified\n");
 		return nullptr;
 	}
 	
 	
-	std::shared_ptr<SubSolver> solver = nullptr;
+	std::shared_ptr<SubSolver> solverPtr = nullptr;
 
 	for (const JsValue& subsolverDefValue : subsolverIter->second.GetJsArray()) {
 		const JsObject& subsolverDef = subsolverDefValue.GetJsObject();
@@ -59,29 +63,20 @@ std::unique_ptr<SubSolverStack> SubSolverStack::CreateFromJsObject(const JsObjec
 			USDMAR_DEBUG("Key 'type' could not be found\n");
 			continue;
 		}
-
-		USDMAR_DEBUG("Found subsolver with type %s\n", typePtr->c_str());
 		std::string& type = *typePtr;
 
-		// This is kind of horrible, I wish I knew how to do it better
-		if (type == "rest") {
-			solver = std::make_shared<RESTSubSolver>();
-		}
-		else if (type == "env") {
-			solver = std::make_shared<EnvSubSolver>();
-		}
-		else if (type == "format") {
-			solver = std::make_shared<FormatterSubSolver>();
-		}
-		else {
-			USDMAR_DEBUG("Subsolver type '%s' unsupported\n", type.c_str());
-			solver = nullptr;
+		Registry& registry = Registry::GetInstance();
+		auto solverPtr = registry.GetSubSolver(type);
+
+		if (solverPtr == nullptr) {
+			TF_WARN("SubSolver with type '%s' is not supported", type.c_str());
+			continue;
 		}
 
-		if (solver != nullptr) {
-			solver->ConfigureFromJsObject(subsolverDef);
-			stack->AddSubSolver(solver);
-		}
+		// Make a copy
+		solverPtr = solverPtr->CreateNew();
+		solverPtr->ConfigureFromJsObject(subsolverDef);
+		stack->AddSubSolver(solverPtr);
 	}
 
 	return stack;

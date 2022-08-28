@@ -11,9 +11,6 @@
 PXR_NAMESPACE_USING_DIRECTIVE
 
 
-
-// std::function<std::string(const std::string&)> func
-// std::string(*func)(const std::string&)
 std::string RegexReplace(const std::string& value, const std::regex& regex, std::function<std::string(const std::string&)> func) {
     std::string result = value;
     std::smatch match;

@@ -14,6 +14,10 @@ public:
 	virtual std::string Resolve(std::string assetPath) override;
 	virtual void ConfigureFromJsObject(const JsObject& object) override;
 
+	virtual std::shared_ptr<SubSolver> CreateNew() const {
+		return std::shared_ptr<EnvSubSolver>(new EnvSubSolver());
+	};
+
 private:
 	std::string _name = "env";
 	bool _normalize = true;

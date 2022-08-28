@@ -5,7 +5,7 @@
 
 def "geo" (
 	references = [
-        @mr:db!/AHB/seq/NJS/0010/boat_aa/latest@
+        @mr:db!/AHB/seq/NJS/0010/boat_aa/latest@</geo>
     ]
     ) {
 }
