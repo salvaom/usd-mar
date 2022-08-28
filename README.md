@@ -1,3 +1,7 @@
+> **Warning**
+> This is probably my first CMake/C++ project, you might see some things that could be better or are simply wrong, so
+> please take it with a pinch of salt. PR are highly appreciated.
+
 # USD Multi Asset Resolver
 
 An ArResolver plugin for USD. This project aims to provide a wide range of tools to make the asset resolution on USD
