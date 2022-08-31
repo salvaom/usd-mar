@@ -27,6 +27,8 @@ SHARED
 	"solvers/env.cpp"
 	"solvers/format.h"
 	"solvers/format.cpp"
+	"solvers/symlink.h"
+	"solvers/symlink.cpp"
 )
 
 
@@ -38,23 +40,29 @@ if (USDMAR_REST)
 		"solvers/rest.cpp"
 	)
 endif()
+if (USDMAR_SUBPROCESS)
+	target_sources(${PROJECT_NAME} 
+	PRIVATE 
+		"solvers/subprocess.h"
+		"solvers/subprocess.cpp"
+	)
+	target_include_directories(${PROJECT_NAME} PRIVATE ${SUBPROCESSH_INCLUDE})
+endif()
 
 target_include_directories(${PROJECT_NAME} 
 	PRIVATE
 		${PXR_INCLUDE_DIRS}
-		${CPR_INCLUDE_DIRS}
 		"${CMAKE_BINARY_DIR}/src"
 )
 
 
-target_link_libraries(${PROJECT_NAME}
-	${PXR_LIBRARIES}
-)
+
+target_link_libraries(${PROJECT_NAME} ${PXR_LIBRARIES})
 if (USDMAR_REST)
-	target_link_libraries(${PROJECT_NAME}
-		cpr::cpr
-	)
+	target_link_libraries(${PROJECT_NAME} cpr::cpr)
+	target_include_directories(${PROJECT_NAME} PRIVATE ${CPR_INCLUDE_DIRS})
 endif()
+
 
 configure_file(
     "plugInfo.json"

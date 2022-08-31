@@ -16,11 +16,15 @@
 #include "usdmar/utils.h"
 #include "usdmar/config.h"
 
+#include "usdmar/solvers/env.h"
+#include "usdmar/solvers/format.h"
+#include "usdmar/solvers/symlink.h"
 #ifdef USDMAR_REST
 #include "usdmar/solvers/rest.h"
 #endif
-#include "usdmar/solvers/env.h"
-#include "usdmar/solvers/format.h"
+#ifdef USDMAR_SUBPROCESS
+#include "usdmar/solvers/subprocess.h"
+#endif
 
 PXR_NAMESPACE_OPEN_SCOPE
 
@@ -36,23 +40,9 @@ std::string _ExtractVarsFromAssetPath(const std::string& assetPath, std::string&
 
 	if (std::regex_search(assetPath, matches, regex)) {
 		
-		// We know we have only three groups on the regex
-		for (size_t i = 1; i < matches.size(); ++i) {
-			auto match = matches[i].str();
-			switch (i)
-			{
-			case 1:
-				scheme = match;
-				break;
-			case 2:
-				stackName = match;
-				break;
-			case 3:
-				return match;
-			default:
-				break;
-			}
-		}
+		scheme = matches[1].str();
+		stackName = matches[2].str();
+		return matches[3].str();
 	}
 	TF_WARN("Asset path %s is invalid\n", assetPath.c_str());
 	return assetPath;
@@ -68,8 +58,12 @@ MultiAssetResolver::MultiAssetResolver() {
 #ifdef USDMAR_REST
 	registry.RegisterSubSolver(std::make_shared<RESTSubSolver>());
 #endif
+#ifdef USDMAR_SUBPROCESS
+	registry.RegisterSubSolver(std::make_shared<SubprocessSubSolver>());
+#endif
 	registry.RegisterSubSolver(std::make_shared<EnvSubSolver>());
 	registry.RegisterSubSolver(std::make_shared<FormatterSubSolver>());
+	registry.RegisterSubSolver(std::make_shared<SymlinkSubSolver>());
 
 	// TODO: Move this environment variable to a USD registered one
 	std::string configFilePath = ArchGetEnv("USDMAR_CONFIG_PATH");

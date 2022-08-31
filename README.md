@@ -16,13 +16,14 @@ and pass its result to the next one until the asset path is fully resolved.
 
 ## Available subsolvers
 
-| Name    | Purpose                                | Notes       |
-|---------|----------------------------------------|-------------|
-| env     | Expands environment variables          | Implemented |
-| rest    | Makes a GET request to a URL           | Implemented |
-| format  | Parses and re-formats                  | Implemented |
-| symlink | Expands symlinks                       | Planned     |
-| cache   | Caches values to be baked for the farm | Planned     |
+| Name       | Purpose                                | Implemented? |
+|------------|----------------------------------------|--------------|
+| env        | Expands environment variables          | Yes          |
+| rest       | Makes a GET request to a URL           | Yes          |
+| format     | Parses and re-formats                  | Yes          |
+| symlink    | Expands symlinks                       | Yes          |
+| subprocess | Resolves the path via a subprocess     | Yes          |
+| cache      | Caches values to be baked for the farm | Planned      |
 
 ## Configuration
 
@@ -143,16 +144,19 @@ cmake -DCMAKE_PREFIX_PATH=<USD INSTALL PATH> -G "<GENERATOR NAME>" -DFETCH_CPR=O
 
 ## Build requirements:
 
-| Name                                 | Optional    | Version |
-|--------------------------------------|-------------|---------|
-| USD                                  | No          | 22.08   |
-| [CPR](https://github.com/libcpr/cpr) | Yes         | 1.9.1   |
-| Python                               | No, planned | 3.7.x   |
+| Name                                                      | Optional    | Version |
+|-----------------------------------------------------------|-------------|---------|
+| USD                                                       | No          | 22.08   |
+| [CPR](https://github.com/libcpr/cpr)                      | Yes         | 1.9.1   |
+| [subprocess.h](https://github.com/sheredom/subprocess.h)  | Yes         | master? |
+| Python                                                    | No, planned | 3.7.x   |
 
 ## Build Options
 
-| Option           | Function                                                              | Default  |
-|------------------|-----------------------------------------------------------------------|----------|
-| USDMAR_REST      | Whether to build with support for the REST subsolver<br/>Requires CRP | ON       |
-| FETCH_CPR        | Downloads and builds CPR                                              | OFF      |
-| RESOLVER_SCHEMES | List of schemes (space separated) to register for asset resolution    | `mr`     |
+| Option                | Function                                                                               | Default  |
+|-----------------------|----------------------------------------------------------------------------------------|----------|
+| USDMAR_REST           | Whether to build with support for the REST subsolver<br/>Requires CRP                  | ON       |
+| USDMAR_SUBPROCESS     | Whether to build with support for the subprocess subsolver<br/>Requires subprocess.h   | ON       |
+| DOWNLOAD_CPR          | Downloads and builds CPR                                                               | OFF      |
+| DOWNLOAD_SUBPROCESSH  | Downloads subprocess.h                                                                 | OFF      |
+| RESOLVER_SCHEMES      | List of schemes (space separated) to register for asset resolution                     | `mr`     |

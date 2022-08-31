@@ -44,6 +44,7 @@ void Registry::RegisterStacksFromJsObject(const JsObject& jsonDict)
 
 		if (!stackData.IsObject()) {
 			TF_WARN("Value of stack %s is not a dict\n", stackName.c_str());
+			++iter;
 			continue;
 		}
 
