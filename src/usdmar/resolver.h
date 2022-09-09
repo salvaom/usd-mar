@@ -24,8 +24,6 @@ protected:
 private:
 	ArDefaultResolver _defaultResolver;
 	SubSolverStack _stack;
-	std::map<std::string, std::string> _schemeDefaults;
-
 };
 
 PXR_NAMESPACE_CLOSE_SCOPE

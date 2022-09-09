@@ -16,26 +16,17 @@
 #include "usdmar/utils.h"
 #include "usdmar/config.h"
 
-#include "usdmar/solvers/env.h"
-#include "usdmar/solvers/format.h"
-#include "usdmar/solvers/symlink.h"
-#ifdef USDMAR_REST
-#include "usdmar/solvers/rest.h"
-#endif
-#ifdef USDMAR_SUBPROCESS
-#include "usdmar/solvers/subprocess.h"
-#endif
+
 
 PXR_NAMESPACE_OPEN_SCOPE
 
 AR_DEFINE_RESOLVER(MultiAssetResolver, ArResolver);
 
-// TODO: Allow this to be define at build time
 std::vector<std::string> uriSchemes = std::vector<std::string>{ RESOLVER_SCHEMES };
 
 std::string _ExtractVarsFromAssetPath(const std::string& assetPath, std::string& scheme, std::string& stackName) {
 
-	std::regex regex("^(" + JoinString("|", uriSchemes) + "):([\\w\\d_]+)?!?(.+)");
+	std::regex regex("^(" + TfStringJoin(uriSchemes, "|") + "):([\\w\\d_]+)?!?(.+)");
 	std::smatch matches;
 
 	if (std::regex_search(assetPath, matches, regex)) {
@@ -50,71 +41,9 @@ std::string _ExtractVarsFromAssetPath(const std::string& assetPath, std::string&
 }
 
 MultiAssetResolver::MultiAssetResolver() {
-
 	USDMAR_DEBUG("MultiResolver::MultiResolver()\n");
 	Registry& registry = Registry::GetInstance();
-
-	// Register first all subsolvers
-#ifdef USDMAR_REST
-	registry.RegisterSubSolver(std::make_shared<RESTSubSolver>());
-#endif
-#ifdef USDMAR_SUBPROCESS
-	registry.RegisterSubSolver(std::make_shared<SubprocessSubSolver>());
-#endif
-	registry.RegisterSubSolver(std::make_shared<EnvSubSolver>());
-	registry.RegisterSubSolver(std::make_shared<FormatterSubSolver>());
-	registry.RegisterSubSolver(std::make_shared<SymlinkSubSolver>());
-
-	// TODO: Move this environment variable to a USD registered one
-	std::string configFilePath = ArchGetEnv("USDMAR_CONFIG_PATH");
-	if (!TfIsFile(configFilePath)) {
-		TF_WARN("USDMAR config path '%s' does not exist\n", configFilePath.c_str());
-		return;
-	}
-	
-	USDMAR_DEBUG("Reading config file '%s'\n", configFilePath.c_str());
-
-	std::ifstream configStream(configFilePath);
-	if (!configStream) {
-		TF_WARN("Could not open %s\n", configFilePath.c_str());
-		return;
-	}
-
-	JsParseError err;
-	const JsValue configJsValue = JsParseStream(configStream, &err);
-
-	if (configJsValue.IsNull()) {
-		TF_WARN("Error parsing JSON %s\n"
-			"line: %d, col: %d ->\n\t%s.\n",
-			configFilePath.c_str(),
-			err.line, err.column,
-			err.reason.c_str());
-		return;
-	}
-	const JsObject& rootDict = configJsValue.GetJsObject();
-
-	registry.RegisterStacksFromJsObject(rootDict);
-
-	auto defaultsPtr = _GetJsObjectValue<JsObject>(rootDict, "defaults");
-	if (defaultsPtr != nullptr) {
-		auto iter = defaultsPtr->begin();
-		while (iter != defaultsPtr->end()) {
-			if (!iter->second.IsString()) {
-				TF_WARN("'default' key '%s' is not a string", iter->first.c_str());
-				++iter;
-				continue;
-			}
-			_schemeDefaults.insert(
-				std::pair<std::string, std::string>(
-					iter->first,
-					iter->second.GetString()
-				)
-			);
-			++iter;
-		}
-	}
-
-	
+	registry.Initialize();
 }
 MultiAssetResolver::~MultiAssetResolver() = default;
 
@@ -142,11 +71,12 @@ MultiAssetResolver::_Resolve(const std::string& assetPath) const
 	USDMAR_DEBUG("Extracted asset path: %s\n", cleanAssetPath.c_str());
 
 	Registry& registry = Registry::GetInstance();
+	auto schemeDefaults = registry.GetSchemeDefaults();
 
 	// If not specified, we fall back to the defaults
 	if (stackName == "") {
-		const auto findIter = _schemeDefaults.find(scheme);
-		if (findIter != _schemeDefaults.end()) {
+		const auto findIter = schemeDefaults.find(scheme);
+		if (findIter != schemeDefaults.end()) {
 			stackName = findIter->second;
 			USDMAR_DEBUG("No stack name specified, defaulting to %s\n", stackName.c_str());
 		}

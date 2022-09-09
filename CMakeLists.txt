@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.24)
+set (CMAKE_CXX_STANDARD 17)
 
 project(usdmar VERSION 0.1.0)
 
@@ -12,7 +13,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 option(USDMAR_REST "Enables support for the rest subsolver (requires CPR package)" ON)
 option(USDMAR_SUBPROCESS "Enables support for the subprocess subsolver (requires subprocess.h)" ON)
 option(DOWNLOAD_CPR "Automatically fetch CPR dependent package" OFF)
-option(DOWNLOAD_SUBPROCESSH "Automatically fetch subprocess.h dependent package" ON)
+option(DOWNLOAD_SUBPROCESSH "Automatically fetch subprocess.h dependent package" OFF)
 
 # Resolver schemes
 if(NOT DEFINED RESOLVER_SCHEMES)

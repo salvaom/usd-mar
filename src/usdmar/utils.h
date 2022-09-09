@@ -9,7 +9,6 @@ PXR_NAMESPACE_USING_DIRECTIVE
 using dict = std::map<std::string, std::string>;
 
 std::string ExpandString(const std::string& value);
-std::string JoinString(const std::string& sep, const std::vector<std::string>& strings);
 
 template <class T>
 std::unique_ptr<T> _GetJsObjectValue(const JsObject& dict, std::string key) {

@@ -3,12 +3,12 @@
 #include <pxr/base/tf/fileUtils.h>
 #include <pxr/base/tf/pathUtils.h>
 #include <pxr/base/tf/diagnosticLite.h>
+#include <pxr/base/tf/stringUtils.h>
 
 #include "usdmar/solvers/subprocess.h"
 #include "usdmar/utils.h"
 #include "usdmar/debug.h"
 #include <subprocess.h>
-
 
 
 SubprocessSubSolver::SubprocessSubSolver() {}
@@ -48,7 +48,7 @@ std::string SubprocessSubSolver::Resolve(std::string assetPath)
 	const char** commandArray = command.data();
 	
 	// Some more conveniences
-	auto fullCommandStr = JoinString(" ", fullCommand);
+	auto fullCommandStr = TfStringJoin(fullCommand, " ");
 	USDMAR_DEBUG("[%s] Running command: %s\n", TF_FUNC_NAME().c_str(), fullCommandStr.c_str());
 	
 	// Create the actual subprocess
@@ -99,7 +99,7 @@ std::string SubprocessSubSolver::Resolve(std::string assetPath)
 		TF_WARN("Subprocess '%s' did not produce expected output matching regex %s:\n%s\n", fullCommandStr.c_str(), _regex.c_str(), output.c_str());
 		return assetPath;
 	}
-	return match[0].str();
+	return match[1].str();
 	
 }
 void SubprocessSubSolver::ConfigureFromJsObject(const JsObject & object) {

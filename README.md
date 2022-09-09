@@ -131,15 +131,15 @@ usdmar - Resolving /AHB/seq/NJS/0010/boat_aa/latest:
 
 ## Build command
 
-The easiest way to build it is to compile USD and use the flag `FETCH_CPR` to automatically download and build the
-missing of dependency:
+The easiest way to build it is to compile USD and use the flags to automatically download and build the
+missing of dependencies:
 
 ```
 git clone https://github.com/salvaom/usd-mar
 cd usd-mar
 mkdir build
 cd build
-cmake -DCMAKE_PREFIX_PATH=<USD INSTALL PATH> -G "<GENERATOR NAME>" -DFETCH_CPR=ON ..
+cmake -DCMAKE_PREFIX_PATH=<USD INSTALL PATH> -G "<GENERATOR NAME>" -DDOWNLOAD_CPR=ON -DDOWNLOAD_SUBPROCESSH=ON ..
 ```
 
 ## Build requirements:

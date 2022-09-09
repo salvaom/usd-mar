@@ -19,21 +19,6 @@ std::string ExpandString(const std::string& value)
     return replacer.Replace(value, regex);
 }
 
-std::string JoinString(const std::string& sep, const std::vector<std::string>& strings) {
-    std::string result;
-
-    for (auto& string : strings) {
-        result += string + sep;
-    }
-
-    if (result != "") {
-        result.erase(result.end() - 1);
-    }
-
-    return result;
-    
-}
-
 _RegexReplacer::_RegexReplacer() {}
 
 std::string _RegexReplacer::Replace(const std::string& value, const std::regex& regex)

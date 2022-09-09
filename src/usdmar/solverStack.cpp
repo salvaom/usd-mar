@@ -75,6 +75,7 @@ std::unique_ptr<SubSolverStack> SubSolverStack::CreateFromJsObject(const JsObjec
 
 		// Make a copy
 		solverPtr = solverPtr->CreateNew();
+		solverPtr->_ConfigureFromJsObjectInternal(subsolverDef);
 		solverPtr->ConfigureFromJsObject(subsolverDef);
 		stack->AddSubSolver(solverPtr);
 	}
