@@ -68,9 +68,9 @@ The following configuration file will do the following:
 
 ```json
 {
-    "resolvers": {
+    "stacks": {
         "db": {
-            "stack": [
+            "resolvers": [
                 {
                     "type": "format",
                     "pairs": [
